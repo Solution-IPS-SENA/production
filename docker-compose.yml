@@ -1,0 +1,153 @@
+version: '2.1'
+
+volumes:
+  auth_microservice_database_sips:
+  clinical_microservices_database_sips:
+
+services:
+  # ############################## Auth database service ##############################
+  auth_microservice_database_sips:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: auth
+      MYSQL_DATABASE: auth
+    expose:
+      - 3306
+    volumes:
+      - auth_microservice_database_sips:/var/lib/mysql
+    restart: always
+    container_name: auth_microservice_database_sips
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  ############################# Clinical database service ##############################
+  clinical_microservices_database_sips:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: solution
+      MYSQL_DATABASE: solution
+    expose:
+      - 3306
+    volumes:
+      - clinical_microservices_database_sips:/var/lib/mysql
+    restart: always
+    container_name: clinical_microservices_database_sips
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  ############################# Frontend on nginx ##############################
+  frontend_nginx_sips:
+    build: ./frontend
+    image: frontend_on_nginx_sips
+    ports:
+      - "80:80"
+    restart: always
+    container_name: frontend_nginx_sips
+
+  ############################# Valores microservice ##############################
+  valores_microservice_sips:
+    build: ./backend/api-valores
+    image: valores_microservice_sips
+    expose:
+      - 3000
+    restart: always
+    container_name: valores_microservice_sips
+
+  ############################# Auth microservice ##############################
+  auth_microservice_sips:
+    build: 
+      context: ./backend
+      args:
+        - SRC_PATH=./Auth
+    image: auth_microservice_sips
+    environment:
+      - DB_HOST=auth_microservice_database_sips
+      - DB_PORT=3306
+      - APP_PORT=3000
+    expose:
+      - 3000
+    restart: always
+    container_name: auth_microservice_sips
+    depends_on:
+      auth_microservice_database_sips:
+        condition: service_healthy
+
+  #############################  Laboratorio microservice ##############################
+  laboratorio_microservice_sips:
+    build: 
+      context: ./backend
+      args:
+        - SRC_PATH=./Laboratorio
+    image: laboratorio_microservice_sips
+    environment:
+      - DB_HOST=clinical_microservices_database_sips
+      - DB_PORT=3306
+      - APP_PORT=3000
+    expose:
+      - 3000
+    restart: always
+    container_name: laboratorio_microservice_sips
+    depends_on:
+      clinical_microservices_database_sips:
+        condition: service_healthy
+
+  ##############################  Medicina microservice ##############################
+  medicina_microservice_sips:
+    build: 
+      context: ./backend
+      args:
+        - SRC_PATH=./Medicina
+    image: medicina_microservice_sips
+    environment:
+      - DB_HOST=clinical_microservices_database_sips
+      - DB_PORT=3306
+      - APP_PORT=3000
+    expose:
+      - 3000
+    restart: always
+    container_name: medicina_microservice_sips
+    depends_on:
+      clinical_microservices_database_sips:
+        condition: service_healthy
+  
+  ##############################  Optometria microservice ##############################
+  optometria_microservice_sips:
+    build: 
+      context: ./backend
+      args:
+        - SRC_PATH=./Optometria
+    image: optometria_microservice_sips
+    environment:
+      - DB_HOST=clinical_microservices_database_sips
+      - DB_PORT=3306
+      - APP_PORT=3000
+    expose:
+      - 3000
+    restart: always
+    container_name: optometria_microservice_sips
+    depends_on:
+      clinical_microservices_database_sips:
+        condition: service_healthy
+
+  ##############################  Psicologia microservice ##############################
+  psicologia_microservice_sips:
+    build: 
+      context: ./backend
+      args:
+        - SRC_PATH=./Psicologia
+    image: psicologia_microservice_sips
+    environment:
+      - DB_HOST=clinical_microservices_database_sips
+      - DB_PORT=3306
+      - APP_PORT=3000
+    expose:
+      - 3000
+    restart: always
+    container_name: psicologia_microservice_sips
+    depends_on:
+      clinical_microservices_database_sips:
+        condition: service_healthy
