@@ -60,11 +60,11 @@ services:
       - "db.adminCommand('ping')"
 
   ############################## Frontend ##############################
-  frontenf_sips:
+  frontend_sips:
     build: ./frontend
     image: frontend_sips
     ports:
-      - "80:80"
+      - "30100:80"
     restart: always
     container_name: frontenf_sips
 
