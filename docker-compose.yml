@@ -42,7 +42,10 @@ services:
 
   ############################## Valores database service ##############################
   valores_microservice_database_sips:
-    image: mongo:5.0.9-focal
+    build: 
+      context: ./backend/api-valores/
+      dockerfile: mongo.Dockerfile
+    image: valores_microservice_database_sips
     expose:
       - 27017
     volumes:
@@ -50,19 +53,20 @@ services:
     restart: always
     container_name: valores_microservice_database_sips
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
-      interval: 10s
-      timeout: 10s
-      retries: 5
+      test:
+      - CMD
+      - mongo
+      - --eval
+      - "db.adminCommand('ping')"
 
   ############################## Frontend on nginx ##############################
-#  frontend_nginx_sips:
-#     build: ./frontend
-#     image: frontend_on_nginx_sips
-#     ports:
-#      - "80:80"
-#    restart: always
-#    container_name: frontend_nginx_sips
+  frontend_nginx_sips:
+    build: ./frontend
+    image: frontend_on_nginx_sips
+    ports:
+      - "80:80"
+    restart: always
+    container_name: frontend_nginx_sips
 
   ############################## Valores microservice ##############################
   valores_microservice_sips:
