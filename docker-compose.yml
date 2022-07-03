@@ -60,20 +60,20 @@ services:
       - "db.adminCommand('ping')"
 
   ############################## Frontend ##############################
-  frontend_sips:
-    build: ./frontend
-    image: frontend_sips
-    ports:
-      - "30100:80"
-    restart: always
-    container_name: frontenf_sips
+  # frontend_sips:
+  #   build: ./frontend
+  #   image: frontend_sips
+  #   ports:
+  #     - "80:80"
+  #   restart: always
+  #   container_name: frontenf_sips
 
   ############################## Valores microservice ##############################
   valores_microservice_sips:
     build: ./backend/api-valores
     image: valores_microservice_sips
     ports:
-      - "3700:3000"
+      - "3000:3000"
     volumes:
       - ./backend/api-valores:/app
       - /app/node_modules
@@ -93,7 +93,7 @@ services:
       - APP_PORT=3000
       - APP_HOST=0.0.0.0
     ports:
-      - "3701:3000"
+      - "3001:3000"
     restart: always
     container_name: auth_microservice_sips
     volumes:
@@ -115,7 +115,7 @@ services:
       - APP_PORT=3000
       - APP_HOST=0.0.0.0
     ports:
-      - "3702:3000"
+      - "3002:3000"
     volumes:
       - ./backend/Laboratorio:/app
     restart: always
@@ -137,7 +137,7 @@ services:
       - APP_PORT=3000
       - APP_HOST=0.0.0.0
     ports:
-      - "3703:3000"
+      - "3003:3000"
     volumes:
       - ./backend/Medicina:/app
     restart: always
@@ -159,7 +159,7 @@ services:
       - APP_PORT=3000
       - APP_HOST=0.0.0.0
     ports:
-      - "3704:3000"
+      - "3004:3000"
     volumes:
       - ./backend/Optometria:/app
     restart: always
@@ -181,7 +181,7 @@ services:
       - APP_PORT=3000
       - APP_HOST=0.0.0.0
     ports:
-      - "3705:3000"
+      - "3005:3000"
     volumes:
       - ./backend/Psicologia:/app
     restart: always
